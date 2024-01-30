@@ -29,33 +29,59 @@ let db;
 app.use(express.json());
 
 // Define a route to get all dealerships with optional state and ID filters
-app.get('/dealerships/get', (req, res) => {
-    const { state, id } = req.query;
+app.get('/api/dealership', (req, res) => {
+    const { state, dealerId } = req.query;
     // Create a selector object based on query parameters
     const selector = {};
+    
     if (state) {
         selector.state = state;
-        db.find(selector)
-    }
-    
-    if (id) {
-        selector.id = parseInt(id); // Filter by "id" with a value of 1
-    }
+        const queryOptions = {
+            selector,
+            limit: 10, // Adjust the limit as needed
+        };
+        db.find(queryOptions, (err, body) => {
+            if (err) {
+                console.error('Error fetching state:', err);
+                res.status(500).json({ error: 'An error occurred while fetching dealerships from a particular state.' });
+            } else {
+                const dealershipstate = body.docs;
+                res.json(dealershipstate);}});
+            } 
 
+    
+    else if (dealerId) {
+        selector.id = parseInt(dealerId); // Filter by "id" with a value of 1
+        const queryOptions = {
+            selector,
+            limit: 10, // Adjust the limit as needed
+        };
+        db.find(queryOptions, (err, body) => {
+            if (err) {
+                console.error('Error fetching dealership ID:', err);
+                res.status(500).json({ error: 'An error occurred while fetching dealerships with a particular ID.' });
+            } else {
+                const dealership_id = body.docs;
+                res.json(dealership_id);
+            }
+        });
+    }
+    else {
     const queryOptions = {
-        selector,
+    selector,
         limit: 10, // Limit the number of documents returned to 10
     };
 
     db.find(queryOptions, (err, body) => {
-        if (err) {
-            console.error('Error fetching dealerships:', err);
-            res.status(500).json({ error: 'An error occurred while fetching dealerships.' });
-        } else {
-            const dealerships = body.docs;
-            res.json(dealerships);
+    if (err) {
+        console.error('Error fetching dealerships:', err);
+        res.status(500).json({ error: 'An error occurred while fetching dealerships.' });
+    } else {
+        const dealerships = body.docs;
+        res.json(dealerships);
         }
     });
+}
 });
 
 app.listen(port, () => {
