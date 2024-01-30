@@ -25,6 +25,7 @@ def main(param_dict):
             connect=True,
         )
         print(f"Databases: {client.all_dbs()}")
+        
     except CloudantException as cloudant_exception:
         print("unable to connect")
         return {"error": cloudant_exception}
