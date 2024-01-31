@@ -1,6 +1,7 @@
 from cloudant.client import Cloudant
 from cloudant.query import Query
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
+from ibm_cloud_sdk_core import ApiException
 import requests
 import atexit
 
@@ -33,30 +34,24 @@ def get_reviews():
 
     # Define the query based on the 'dealership' ID
     selector = {
-        'dealership': dealership_id
+        "dealership": dealership_id
     }
 
     # Execute the query using the query method
-    try:
-        result = db.get_query_result(selector)
-        res_code = result._result
-        httpresp = res_code.status_code
-        if httpresp >= 500:
-            return jsonify({"error": "Something went wrong on the server"}), 500
-    except NameError:
-        return {"message": "Dealer ID does not exist"}, 404
-
-    # Create a list to store the documents
+    result = db.get_query_result(selector)
+        # Create a list to store the documents
     data_list = []
-
-    # Iterate through the results and add documents to the list
+        # Iterate through the results and add documents to the list
     for doc in result:
         data_list.append(doc)
+        # Return the data as JSON
+    if (data_list):
+        return jsonify(data_list)
+    else:
+        return jsonify({"error": "Dealer ID does not exist"}), 404
+            
 
-    # Return the data as JSON
-    return jsonify(data_list)
-
-
+    
 @app.route('/api/post_review', methods=['POST'])
 def post_review():
     if not request.json:
@@ -72,12 +67,12 @@ def post_review():
             abort(400, description=f'Missing required field: {field}')
 
     # Save the review data as a new document in the Cloudant database
-    posting = db.create_document(review_data)
-    status = posting.status_code
-    if status >= 500:
-        return jsonify({"error": "Something went wrong on the server"}), 500
-
+    db.create_document(review_data)
     return jsonify({"message": "Review posted successfully"}), 201
+   
+@app.errorhandler(500)
+def internal_server_error(error):
+    return jsonify({"error": "Something went wrong on the server"}), 500    
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
