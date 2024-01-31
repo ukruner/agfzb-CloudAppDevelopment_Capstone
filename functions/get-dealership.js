@@ -30,7 +30,7 @@ app.use(express.json());
 
 // Define a route to get all dealerships with optional state and ID filters
 app.get('/api/dealership', (req, res) => {
-    const { state, dealerId } = req.query;
+    const { state, dealerid } = req.query;
     // Create a selector object based on query parameters
     const selector = {};
     
@@ -55,8 +55,8 @@ app.get('/api/dealership', (req, res) => {
             } 
 
     
-    else if (dealerId) {
-        selector.id = parseInt(dealerId); // Filter by "id" with a value of 1
+    else if (req.query.id) {
+        selector.id = parseInt(req.query.id, 10); // Filter by "id" with a value of 1
         const queryOptions = {
             selector,
             limit: 10, // Adjust the limit as needed
@@ -66,9 +66,9 @@ app.get('/api/dealership', (req, res) => {
                 console.error('Error fetching dealership ID:', err);
                 res.status(500).json({ error: 'An error occurred while fetching dealerships with a particular ID.' });
             } else {
-                const dealershipId = body.docs;
-                if (dealershipId.length > 0) {
-                    res.json(dealershipId);
+                const dealershipid = body.docs;
+                if (dealershipid.length > 0) {
+                    res.json(dealershipid);
                 } else{
                     res.status(404).json({ error: "Dealership with such ID does not exist"});    
                 }
