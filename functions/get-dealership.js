@@ -46,7 +46,12 @@ app.get('/api/dealership', (req, res) => {
                 res.status(500).json({ error: 'An error occurred while fetching dealerships from a particular state.' });
             } else {
                 const dealershipstate = body.docs;
-                res.json(dealershipstate);}});
+                if (dealershipstate.length > 0) {
+                    res.json(dealershipstate);   
+                } else{
+                    res.status(404).json({ error: "State doesn't exist"});    
+                }
+                }});
             } 
 
     
@@ -61,24 +66,33 @@ app.get('/api/dealership', (req, res) => {
                 console.error('Error fetching dealership ID:', err);
                 res.status(500).json({ error: 'An error occurred while fetching dealerships with a particular ID.' });
             } else {
-                const dealership_id = body.docs;
-                res.json(dealership_id);
+                const dealershipId = body.docs;
+                if (dealershipId.length > 0) {
+                    res.json(dealershipId);
+                } else{
+                    res.status(404).json({ error: "Dealership with such ID does not exist"});    
+                }
+                }});
             }
-        });
-    }
     else {
-    const queryOptions = {
-    selector,
+        const queryOptions = {
+        selector,
         limit: 10, // Limit the number of documents returned to 10
-    };
+        };
 
-    db.find(queryOptions, (err, body) => {
-    if (err) {
+        db.find(queryOptions, (err, body) => {
+        if (err) {
         console.error('Error fetching dealerships:', err);
         res.status(500).json({ error: 'An error occurred while fetching dealerships.' });
-    } else {
+        } 
+        else {
         const dealerships = body.docs;
-        res.json(dealerships);
+            if (dealerships.length > 0) {
+            res.json(dealerships);
+        }
+            else{
+            res.status(404).json({ error: 'Database is empty'});    
+        }
         }
     });
 }
