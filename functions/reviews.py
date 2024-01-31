@@ -18,7 +18,7 @@ db = client['reviews']
 
 app = Flask(__name__)
 
-@app.route('/api/get_reviews', methods=['GET'])
+@app.route('/api/review', methods=['GET'])
 def get_reviews():
     dealership_id = request.args.get('id')
 
@@ -52,7 +52,7 @@ def get_reviews():
             
 
     
-@app.route('/api/post_review', methods=['POST'])
+@app.route('/api/review', methods=['POST'])
 def post_review():
     if not request.json:
         abort(400, description='Invalid JSON data')
