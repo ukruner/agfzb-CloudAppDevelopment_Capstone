@@ -62,7 +62,7 @@ class CarModel(models.Model):
         "Car model: " + self.model_name + "," + \
         "Car dealership id: " + str(self.dealer_id) + "," + \
         "Car type: " + self.model_type + "," + \
-        "Car year: " + self.model_year + "," + \
+        "Car year: " + str(self.model_year) + "," + \
         "Car new or not: " + str(self.is_used) + "," + \
         f"Car images are available on URL https://www.google.com/search?q={self.car_make.name}+{self.model_name}&tbm=isch"
 
