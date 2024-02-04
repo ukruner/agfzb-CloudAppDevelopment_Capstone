@@ -71,14 +71,14 @@ class CarModel(models.Model):
 # <HINT> Create a plain Python class `DealerReview` to hold review data
 class CarReview(models.Model):
     dealership = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100, blank=True)
-    id = models.IntegerField(blank=True)
-    review = models.TextField(max_length=500, blank=True)
-    purchase = models.BooleanField(blank=True)
-    purchase_date = models.CharField(max_length=30, blank=True)
-    car_make = models.CharField(max_length=50, blank=True)
-    car_model = models.CharField(max_length=50, blank=True)
-    car_year = models.IntegerField(blank=True)
+    name = models.CharField(max_length=100, default='', blank=True)
+    id = models.IntegerField(blank=True, null=True)
+    review = models.TextField(max_length=500, blank=True, null=True)
+    purchase = models.BooleanField(blank=True, null=True)
+    purchase_date = models.CharField(max_length=30, blank=True, null=True)
+    car_make = models.CharField(max_length=50, blank=True, null=True)
+    car_model = models.CharField(max_length=50, blank=True, null=True)
+    car_year = models.IntegerField(blank=True, null=True)
 
     # def save(self, *args, **kwargs):
     #     api_url = 'https://*.cognitiveclass.ai/api/review' 
