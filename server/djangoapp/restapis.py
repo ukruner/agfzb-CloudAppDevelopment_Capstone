@@ -46,11 +46,11 @@ db_reviews = client['reviews']
 # - Call get_request() with specified arguments
 # - Parse JSON results into a CarDealer object list
 
-def get_dealers_from_cf(db_dealerships):
+def get_dealers_from_cf():
     json_convert = jsonify(db_dealerships)
     if json_convert:
         # Get the row list in JSON as dealers
-        dealers = json_result["rows"]
+        dealers = json_convert["rows"]
         # For each dealer object
         for dealer in dealers:
             # Get its content in `doc` object
