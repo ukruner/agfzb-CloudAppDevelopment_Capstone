@@ -57,5 +57,8 @@
             </div>
         </nav>
     <!--Add a dealer table here -->
+    {% for line in dealerships %}
+        <p>{{ line }}</p>
+    {% endfor %}
     </body>
 </html>
