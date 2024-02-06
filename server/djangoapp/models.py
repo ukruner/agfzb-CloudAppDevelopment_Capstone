@@ -102,28 +102,5 @@ class CarReview(models.Model):
     car_model = models.CharField(max_length=50, blank=True, null=True)
     car_year = models.IntegerField(blank=True, null=True)
 
-    # def save(self, *args, **kwargs):
-    #     api_url = 'https://*.cognitiveclass.ai/api/review' 
-    #     response = requests.get(api_url)
-    #     if response.status_code == 200:
-    #         models_data = response.json()
-    #         for model_data in models_data:
-    #             dealership = model_data.get('dealership')
-    #             name = model_data.get('name')
-    #             id = model_data.get('id')
-    #             review = model_data.get('review')
-    #             purchase = model_data.get('purchase')
-    #             purchase_date = model_data.get('purchase_date')
-    #             car_make = model_data.get('car_make')
-    #             car_model = model_data.get('car_model')
-    #             car_year = model_data.get('car_year')
-                
-    #             # Creating the CarReview instance
-    #             one_instance = CarReview(dealership=dealership, name=name, id=id, review=review, purchase=purchase, purchase_date=purchase_date, car_make=car_make, car_model=car_model, car_year=car_year)
-    #             one_instance.save()
-    #     else:
-    #         print('Error fetching models from cloud database')
-    #     super().save(*args, **kwargs)
-
     def __str__(self):
         return f"Reviews of the car dealership with id of {str(self.dealership)}: "
