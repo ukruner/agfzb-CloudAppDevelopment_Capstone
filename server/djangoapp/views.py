@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
-from .restapis import get_dealers_from_cf
+from .restapis import get_dealers_from_cf, get_reviews_from_cf
 import logging
 import json
 
@@ -79,13 +79,27 @@ def registration_request(request):
 # Update the `get_dealerships` view to render the index page with a list of dealerships
 def get_dealerships(request):
     if request.method == "GET":
-        url = "https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership"
+        id = request.GET.get('id', '')  # Get id from request.GET, default to empty string if not provided
+        state = request.GET.get('state', '')
+        url = f"https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}&state={state}"
         # Get dealers from the URL
-        dealerships = get_dealers_from_cf(url, id=13)
+        dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
         dealer_names = ', '.join([dealer.short_name for dealer in dealerships])
         # Return a list of dealer short name
         context = {"dealerships": dealerships}
+        return render(request, 'djangoapp/index.html', context)
+
+def get_reviews(request):
+    if request.method == "GET":
+        id = request.GET.get('id')  
+        url = f"https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={id}"
+        # Get dealers from the URL
+        reviews = get_reviews_from_cf(url)
+        # Concat all dealer's short name
+        review_content = ', '.join([review.review for review in reviews])
+        # Return a list of dealer short name
+        context = {"reviews": review_content}
         return render(request, 'djangoapp/index.html', context)
 
 def about_us(request):

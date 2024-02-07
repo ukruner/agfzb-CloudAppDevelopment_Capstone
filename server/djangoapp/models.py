@@ -91,16 +91,18 @@ class CarDealer:
         return "Dealer name: " + self.full_name
 
 # <HINT> Create a plain Python class `DealerReview` to hold review data
-class CarReview(models.Model):
-    dealership = models.IntegerField(primary_key=True)
-    name = models.CharField(max_length=100, default='', blank=True)
-    id = models.IntegerField(blank=True, null=True)
-    review = models.TextField(max_length=500, blank=True, null=True)
-    purchase = models.BooleanField(blank=True, null=True)
-    purchase_date = models.CharField(max_length=30, blank=True, null=True)
-    car_make = models.CharField(max_length=50, blank=True, null=True)
-    car_model = models.CharField(max_length=50, blank=True, null=True)
-    car_year = models.IntegerField(blank=True, null=True)
+class CarReview:
+    def __init__(self, dealership, name, id, review, purchase, purchase_date, car_make, car_model, car_year, sentiment):
+        self.dealership = dealership
+        self.name = name
+        self.id = id
+        self.review = review
+        self.purchase = purchase
+        self.purchase_date = purchase_date
+        self.car_make = car_make
+        self.car_model = car_model
+        self.car_year = car_year
+        self.sentiment = sentiment
 
     def __str__(self):
         return f"Reviews of the car dealership with id of {str(self.dealership)}: "
