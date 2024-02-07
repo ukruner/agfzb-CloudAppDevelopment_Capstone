@@ -10,9 +10,6 @@ pip install --upgrade pip
 # Install Cloudant
 pip install Cloudant
 
-# Install Flask
-pip install Flask
-
 pip install ibm_cloud_sdk_core
 
 pip install requests
