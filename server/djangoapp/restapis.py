@@ -2,15 +2,25 @@ import requests
 import json
 from .models import CarDealer, CarReview
 from requests.auth import HTTPBasicAuth
+from ibm_watson import NaturalLanguageUnderstandingV1
+from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
+from ibm_watson.natural_language_understanding_v1 \
+    import Features, SentimentOptions, EntitiesOptions, KeywordsOptions
 
 
-def get_request(url, **kwargs):
+
+def get_request(url, auth=None, **kwargs):
     print(kwargs)
     print("GET from {} ".format(url))
     try:
+        # if api_key:
         # Call get method of requests library with URL and parameters
-        response = requests.get(url, headers={'Content-Type': 'application/json'},
+        response = requests.get(url, headers={'Content-Type': 'application/json'}, auth=HTTPBasicAuth('apikey', 'h6OLXbfGGoKT14A9zpZsPIupGnKUeBaas_EqTfHPNOhn'),
                                     params=kwargs)
+        # else:
+        #     response = requests.get(url, headers={'Content-Type': 'application/json'},
+        #                             params=kwargs)
+
     except:
         # If any error occurs
         print("Network exception occurred")
@@ -44,6 +54,7 @@ def get_dealers_from_cf(url, **kwargs):
 
 def get_reviews_from_cf(url, **kwargs):
     results = []
+    keylist = ['dealership', 'name', 'id', 'review', 'purchase', 'purchase_date', 'car_make', 'car_model', 'car_year']
     # Call get_request with a URL parameter
     json_result = get_request(url)
     if json_result:
@@ -52,6 +63,9 @@ def get_reviews_from_cf(url, **kwargs):
         print(reviews)
         # For each dealer object
         for review in reviews:
+            for k in keylist:
+                if k not in review.keys():
+                    review[k]=''
             # Get its content in `doc` object
             review_obj = review
             print("Review", review_obj)
@@ -64,7 +78,8 @@ def get_reviews_from_cf(url, **kwargs):
             purchase_date=review_obj['purchase_date'],
             car_make=review_obj['car_make'],
             car_model=review_obj['car_model'],
-            car_year=review_obj['car_year'])
+            car_year=review_obj['car_year'],
+            sentiment=analyze_review_sentiments(review_obj['review']))
             results.append(review_new)
 
     return results
@@ -83,6 +98,35 @@ def get_reviews_from_cf(url, **kwargs):
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
+def analyze_review_sentiments(dealerreview):
+    authenticator = IAMAuthenticator('h6OLXbfGGoKT14A9zpZsPIupGnKUeBaas_EqTfHPNOhn')
+    natural_language_understanding = NaturalLanguageUnderstandingV1(
+    version='2022-04-07',
+    authenticator=authenticator)
 
+    natural_language_understanding.set_service_url('https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/5cab2d96-30be-48f9-9c7f-3f040d30a079')
+    if len(dealerreview) < 20:
+        return {"error": "Text is too short to analyze"}
+    else:
+        response = natural_language_understanding.analyze(
+        text=dealerreview,
+        features=Features(
+            entities=EntitiesOptions(emotion=True, sentiment=True, limit=2),
+            keywords=KeywordsOptions(emotion=True, sentiment=True,
+                                    limit=2))).get_result()
+
+        print(json.dumps(response, indent=2))
+        sent = response['keywords'][0]['sentiment']['label']
+        return sent
+#   url='https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/5cab2d96-30be-48f9-9c7f-3f040d30a079'
+#   params = dict()
+#   params["text"] = dealerreview
+#   params["version"] = '2022-04-07'
+#   params["features"] = Features(
+#         entities=EntitiesOptions(emotion=True, sentiment=True, limit=2))
+# #   params["return_analyzed_text"] = kwargs["return_analyzed_text"]
+#   response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
+#                                     auth=HTTPBasicAuth('apikey', 'h6OLXbfGGoKT14A9zpZsPIupGnKUeBaas_EqTfHPNOhn'))
+#   return response  
 
 

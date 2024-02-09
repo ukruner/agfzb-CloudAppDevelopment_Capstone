@@ -9,3 +9,5 @@ sudo apt-get install -y python3.9 python3.9-distutils
 
 # Install Flask
 /usr/bin/python3.9 -m pip install Flask
+
+/usr/bin/python3.9 -m pip install ibm_cloud_sdk_core

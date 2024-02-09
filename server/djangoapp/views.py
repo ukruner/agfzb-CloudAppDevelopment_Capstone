@@ -99,8 +99,8 @@ def get_reviews(request):
         # Concat all dealer's short name
         review_content = ', '.join([review.review for review in reviews])
         # Return a list of dealer short name
-        context = {"reviews": review_content}
-        return render(request, 'djangoapp/index.html', context)
+        context = {"reviews": reviews}
+        return render(request, 'djangoapp/review.html', context)
 
 def about_us(request):
     context = {}
