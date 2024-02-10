@@ -2,6 +2,7 @@ import requests
 import json
 from .models import CarDealer, CarReview
 from requests.auth import HTTPBasicAuth
+from django.http import HttpResponseRedirect, HttpResponse, HttpResponseBadRequest
 from ibm_watson import NaturalLanguageUnderstandingV1
 from ibm_cloud_sdk_core.authenticators import IAMAuthenticator
 from ibm_watson.natural_language_understanding_v1 \
@@ -87,17 +88,27 @@ def get_reviews_from_cf(url, **kwargs):
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
+def post_request(url, json_payload, **kwargs):
+    required_fields = ['id', 'name', 'dealership', 'review', 'purchase', 'time']
+    if not json_payload:
+        return HttpResponseBadRequest("JSON data missing")
 
-# Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
-# def get_dealer_by_id_from_cf(url, dealerId):
-# - Call get_request() with specified arguments
-# - Parse JSON results into a DealerView object list
+    # Validate that the required fields are present in the review data
+    else:
+        for field in required_fields:
+            if field not in json_payload.keys():
+                return HttpResponseBadRequest(f"{field} is a required field, and it is missing")
+        requests.post(url, params=kwargs, json=json_payload)
 
+
+    # Save the review data as a new document in the Cloudant database
 
 # Create an `analyze_review_sentiments` method to call Watson NLU and analyze text
 # def analyze_review_sentiments(text):
 # - Call get_request() with specified arguments
 # - Get the returned sentiment label such as Positive or Negative
+
+
 def analyze_review_sentiments(dealerreview):
     authenticator = IAMAuthenticator('h6OLXbfGGoKT14A9zpZsPIupGnKUeBaas_EqTfHPNOhn')
     natural_language_understanding = NaturalLanguageUnderstandingV1(
@@ -116,17 +127,12 @@ def analyze_review_sentiments(dealerreview):
                                     limit=2))).get_result()
 
         print(json.dumps(response, indent=2))
-        sent = response['keywords'][0]['sentiment']['label']
-        return sent
-#   url='https://api.eu-gb.natural-language-understanding.watson.cloud.ibm.com/instances/5cab2d96-30be-48f9-9c7f-3f040d30a079'
-#   params = dict()
-#   params["text"] = dealerreview
-#   params["version"] = '2022-04-07'
-#   params["features"] = Features(
-#         entities=EntitiesOptions(emotion=True, sentiment=True, limit=2))
-# #   params["return_analyzed_text"] = kwargs["return_analyzed_text"]
-#   response = requests.get(url, params=params, headers={'Content-Type': 'application/json'},
-#                                     auth=HTTPBasicAuth('apikey', 'h6OLXbfGGoKT14A9zpZsPIupGnKUeBaas_EqTfHPNOhn'))
-#   return response  
+        sentiment_response = response['keywords'][0]['sentiment']['label']
+        return sentiment_response
+
+
+
+
+
 
 

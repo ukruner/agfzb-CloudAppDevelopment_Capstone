@@ -16,6 +16,7 @@ urlpatterns = [
     # path for registration
     path(route='', view=views.get_dealerships, name='index'),
     path(route='review/', view=views.get_reviews, name='review'),
+    path(route='post/review/', view=views.add_review, name='add_review'),
     path(route='registration/', view=views.registration_request, name='registration'),
     # path for login
     path(route='login/', view=views.login_request, name='login'),

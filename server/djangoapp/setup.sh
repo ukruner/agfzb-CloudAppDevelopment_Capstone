@@ -2,7 +2,7 @@
 
 # Install Python 3.9
 sudo apt-get update
-sudo apt-get install -y python3.9 python3.9-distutils
+sudo apt-get install -y python3.11 python3.11-distutils
 
 # Upgrade pip
 pip install --upgrade pip

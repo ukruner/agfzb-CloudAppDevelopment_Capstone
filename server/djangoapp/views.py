@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, HttpResponse
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
@@ -7,7 +7,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
-from .restapis import get_dealers_from_cf, get_reviews_from_cf
+from .restapis import get_dealers_from_cf, get_reviews_from_cf, post_request
 import logging
 import json
 
@@ -89,6 +89,22 @@ def get_dealerships(request):
         # Return a list of dealer short name
         context = {"dealerships": dealerships}
         return render(request, 'djangoapp/index.html', context)
+
+def add_review(request):
+    # user = self.request.user
+    url = 'https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review'
+    context = {}
+    if request.method == 'POST':
+        if User.is_authenticated:
+            data = json.loads(request.body)
+            data['time']=datetime.utcnow().isoformat()
+            reviewpost = post_request(url, data)
+            # context['message']='Review posted succesfully'
+            # return render(request, 'djangoapp/index.html', context)
+            return HttpResponse("Review posted successfully")
+        else:
+            context['message']="Only authenticated users can post reviews, please login"
+            return render(request, 'djangoapp/login.html', context)
 
 def get_reviews(request):
     if request.method == "GET":
