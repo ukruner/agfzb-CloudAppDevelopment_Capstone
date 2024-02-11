@@ -106,9 +106,9 @@ def add_review(request):
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
 
-def get_reviews(request):
+def get_reviews(request, id):
     if request.method == "GET":
-        id = request.GET.get('id')  
+        # id = request.GET.get('id')  
         url = f"https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={id}"
         # Get dealers from the URL
         reviews = get_reviews_from_cf(url)
@@ -116,7 +116,7 @@ def get_reviews(request):
         review_content = ', '.join([review.review for review in reviews])
         # Return a list of dealer short name
         context = {"reviews": reviews}
-        return render(request, 'djangoapp/review.html', context)
+        return render(request, 'djangoapp/dealer_details.html', context)
 
 def about_us(request):
     context = {}

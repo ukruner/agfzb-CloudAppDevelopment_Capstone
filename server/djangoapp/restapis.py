@@ -48,16 +48,16 @@ def get_dealers_from_cf(url, **kwargs):
             dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"], full_name=dealer_doc["full_name"],
                                    id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"],
                                    short_name=dealer_doc["short_name"],
-                                   st=dealer_doc["st"], zip=dealer_doc["zip"])
+                                   st=dealer_doc["st"], zip=dealer_doc["zip"], state=dealer_doc['state'])
             results.append(dealer_obj)
 
     return results
 
 def get_reviews_from_cf(url, **kwargs):
     results = []
-    keylist = ['dealership', 'name', 'id', 'review', 'purchase', 'purchase_date', 'car_make', 'car_model', 'car_year']
+    keylist = ['dealership', 'name', 'time', 'id', 'review', 'purchase', 'purchase_date', 'car_make', 'car_model', 'car_year']
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    json_result = get_request(url, id)
     if json_result:
         # Get the row list in JSON as dealers
         reviews = json_result
@@ -80,6 +80,7 @@ def get_reviews_from_cf(url, **kwargs):
             car_make=review_obj['car_make'],
             car_model=review_obj['car_model'],
             car_year=review_obj['car_year'],
+            time=review_obj['time'],
             sentiment=analyze_review_sentiments(review_obj['review']))
             results.append(review_new)
 

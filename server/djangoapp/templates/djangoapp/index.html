@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dealership Review</title>
+    <title>Dealership and Review project index page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -56,9 +56,41 @@
                 </ul>		  
             </div>
         </nav>
-    <!--Add a dealer table here -->
-    {% for line in dealerships %}
-        <p>{{ line }}</p>
-    {% endfor %}
+        {% load static %}
+        <div class="container">
+            <h1>Dealership table</h1>
+            <div class="table-responsive">
+                <table class="table table-bordered" id="table" data-filter-control="true"">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Dealer Name</th>
+                            <th>City</th>
+                            <th>Address</th>
+                            <th>Zip</th>
+                            <th data-field="state" data-filter-control="select" class="form-inline">State</th>
+                        </tr>
+                    </thead>
+                    <tbody> 
+                            {% for dealer in dealerships %}
+                        <tr>
+                            <td>{{dealer.id}}</td>
+                            <td><a href="{% url 'djangoapp:dealer_details' dealer.id%}">{{dealer.full_name}}</a></td>
+                            <td>{{dealer.city}}</td>
+                            <td>{{dealer.address}}</td>
+                            <td>{{dealer.zip}}</td>
+                            <td>{{dealer.state}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    
     </body>
+    <script>
+        $(function() {
+          $('#table').bootstrapTable()
+        })
+      </script>
 </html>
