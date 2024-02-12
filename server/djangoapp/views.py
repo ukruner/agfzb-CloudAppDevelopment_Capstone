@@ -90,10 +90,31 @@ def get_dealerships(request):
         context = {"dealerships": dealerships}
         return render(request, 'djangoapp/index.html', context)
 
-def add_review(request):
-    # user = self.request.user
+
+def get_dealerships_by_id(id):
+        url = f"https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}"
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_name = dealerships[0]
+        # Return a list of dealer short name
+        return dealer_name
+
+def get_dealerships_name(id):
+        url = f"https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}"
+        # Get dealers from the URL
+        dealerships = get_dealers_from_cf(url)
+        # Concat all dealer's short name
+        dealer_name = dealerships[0]
+        context = {"dealer_name": dealer_name}
+        # Return a list of dealer short name
+        return (request, 'djangoapp/add_review', context)
+
+def add_review(request, id):
     url = 'https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review'
     context = {}
+    dealer_name = get_dealerships_by_id(id)
+    context['dealer_name']=dealer_name
     if request.method == 'POST':
         if User.is_authenticated:
             data = json.loads(request.body)
@@ -101,7 +122,7 @@ def add_review(request):
             reviewpost = post_request(url, data)
             # context['message']='Review posted succesfully'
             # return render(request, 'djangoapp/index.html', context)
-            return HttpResponse("Review posted successfully")
+            return HttpResponse("Review added successfully!")
         else:
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
@@ -112,10 +133,11 @@ def get_reviews(request, id):
         url = f"https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={id}"
         # Get dealers from the URL
         reviews = get_reviews_from_cf(url)
+        dealer_name = get_dealerships_by_id(id)
         # Concat all dealer's short name
         review_content = ', '.join([review.review for review in reviews])
         # Return a list of dealer short name
-        context = {"reviews": reviews}
+        context = {"reviews": reviews, "dealer_name": dealer_name}
         return render(request, 'djangoapp/dealer_details.html', context)
 
 def about_us(request):

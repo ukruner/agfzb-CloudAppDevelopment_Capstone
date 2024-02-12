@@ -54,48 +54,20 @@
             </div>
         </nav>
         {% load static %}
-        <div class="card-columns">
-            <h1>Reviews for {{reviews.name}}</h1>
+        
+            <div><h1>Reviews for {{dealer_name}}</h1></div>
+            <div class="card-columns p-5">
             {% for review in reviews %}
+                <div class ='card-container'>
                 <div class='card'>
-                    <img class="card-img-left" src= "{% if review.sentiment=='positive' %}{% static '{{MEDIA_URL}}/emoji/positive.png' %}
-                    {% elif review.sentiment=='negative' %}{% static '{{MEDIA_URL}}/emoji/negative.png' %}
-                    {% else %}{% static '{{MEDIA_URL}}/emoji/neutral.png' %}  {% endif %}">
+                    <img class="card-img-left" src="{% if review.sentiment == 'positive' %}{{MEDIA_URL}}/emoji/positive.png
+                    {% elif review.sentiment == 'negative' %}{{MEDIA_URL}}/emoji/negative.png
+                    {% else %}{{MEDIA_URL}}/emoji/neutral.png{% endif %}" style="width: 10%;">
                     <div class='card-header'>
-                        <p>{{review.car_make}}, {{review.car_model}}</p>
-                        <p>{{review.car_year}}</p></div>
-                    <div class='card-body'>
-                        <p>{{review.review}}</p></div>
-                    </div>
-            {% endfor %}
-            
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Dealer Name</th>
-                            <th>Dealer ID</th>
-                            <th>Review</th>
-                            <th>Purchase</th>
-                            <th>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody> 
-                            {% for review in reviews %}
-                        <tr>
-                            <td>{{review.id}}</td>
-                            <td>{{review.name}}</td>
-                            <td>{{review.dealership}}</td>
-                            <td>{{review.review}}</td>
-                            <td>{{review.purchase}}</td>
-                            <td>{{review.time}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    
+                        <h4><p>{{review.car_make}}, {{review.car_model}}</p>
+                        <p>{{review.car_year}}</p></h4>
+                        <p>{{review.review}}</p></div></div>
+            {% endfor %}  
+                        </div></div></div>
     </body>
 </html>
