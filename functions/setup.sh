@@ -1,4 +1,4 @@
-sudo apt-get update
+
 
 pip install Cloudant
 pip install Flask

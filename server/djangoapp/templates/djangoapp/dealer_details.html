@@ -20,12 +20,6 @@
                         <a class="navbar-brand" href="/djangoapp">Car Dealership Drivaroo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Add review</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Dealer details</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" href="/djangoapp/about">About us</a>
                     </li>
                     <li class="nav-item">
@@ -36,6 +30,9 @@
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">
                 <ul class="navbar-nav text-nowrap">
                     {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link active" href="/djangoapp/post/review">Add review</a>
+                </li>
                 <li>
                     <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
                     <a class="btn btn-link" href="{% url 'djangoapp:logout' %}">Logout</a>
@@ -57,8 +54,21 @@
             </div>
         </nav>
         {% load static %}
-        <div class="container">
-            <h1>Review table</h1>
+        <div class="card-columns">
+            <h1>Reviews for {{reviews.name}}</h1>
+            {% for review in reviews %}
+                <div class='card'>
+                    <img class="card-img-left" src= "{% if review.sentiment=='positive' %}{% static '{{MEDIA_URL}}/emoji/positive.png' %}
+                    {% elif review.sentiment=='negative' %}{% static '{{MEDIA_URL}}/emoji/negative.png' %}
+                    {% else %}{% static '{{MEDIA_URL}}/emoji/neutral.png' %}  {% endif %}">
+                    <div class='card-header'>
+                        <p>{{review.car_make}}, {{review.car_model}}</p>
+                        <p>{{review.car_year}}</p></div>
+                    <div class='card-body'>
+                        <p>{{review.review}}</p></div>
+                    </div>
+            {% endfor %}
+            
             <div class="table-responsive">
                 <table class="table table-bordered">
                     <thead>
