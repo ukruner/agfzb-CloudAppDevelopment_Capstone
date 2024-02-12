@@ -58,7 +58,7 @@
         </nav>
     <!--Add review form here -->
     {% load static %}
-    <form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+    <form action="{% url 'djangoapp:index' %}" method="post">
         <div><h1>Add review for dealership {{dealer_name}}</h1></div>
         <div><h3>Enter the review content:</h3></div>
         <p></p>

@@ -100,15 +100,9 @@ def get_dealerships_by_id(id):
         # Return a list of dealer short name
         return dealer_name
 
-def get_dealerships_name(id):
-        url = f"https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}"
-        # Get dealers from the URL
-        dealerships = get_dealers_from_cf(url)
-        # Concat all dealer's short name
-        dealer_name = dealerships[0]
-        context = {"dealer_name": dealer_name}
-        # Return a list of dealer short name
-        return (request, 'djangoapp/add_review', context)
+def review_template(request, id):
+     
+        dealerships = get_dealerships_by_id(id)
 
 def add_review(request, id):
     url = 'https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review'
@@ -121,11 +115,14 @@ def add_review(request, id):
             data['time']=datetime.utcnow().isoformat()
             reviewpost = post_request(url, data)
             # context['message']='Review posted succesfully'
-            # return render(request, 'djangoapp/index.html', context)
+            render(request, 'djangoapp/add_review.html', context)
             return HttpResponse("Review added successfully!")
         else:
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
+    elif request.method == "GET":
+        return render(request, 'djangoapp/add_review.html', context)
+        # return HttpResponse("executing get request")
 
 def get_reviews(request, id):
     if request.method == "GET":
