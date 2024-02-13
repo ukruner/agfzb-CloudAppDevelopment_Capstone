@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from .models import CarDealer, CarReview, CarMake, CarModel
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
 # from .restapis import related methods
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
-from .restapis import get_dealers_from_cf, get_reviews_from_cf, post_request
+from .restapis import get_dealers_from_cf, get_reviews_from_cf, post_request, analyze_review_sentiments
 import logging
 import json
 
@@ -81,7 +82,7 @@ def get_dealerships(request):
     if request.method == "GET":
         id = request.GET.get('id', '')  # Get id from request.GET, default to empty string if not provided
         state = request.GET.get('state', '')
-        url = f"https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}&state={state}"
+        url = f"https://urmaskryner-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}&state={state}"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
@@ -92,7 +93,7 @@ def get_dealerships(request):
 
 
 def get_dealerships_by_id(id):
-        url = f"https://urmaskryner-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}"
+        url = f"https://urmaskryner-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/dealership?id={id}"
         # Get dealers from the URL
         dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
@@ -105,29 +106,52 @@ def review_template(request, id):
         dealerships = get_dealerships_by_id(id)
 
 def add_review(request, id):
-    url = 'https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review'
+    url = 'https://urmaskryner-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review'
     context = {}
     dealer_name = get_dealerships_by_id(id)
     context['dealer_name']=dealer_name
+    context['dealer_id']=id
     if request.method == 'POST':
         if User.is_authenticated:
-            data = json.loads(request.body)
-            data['time']=datetime.utcnow().isoformat()
-            reviewpost = post_request(url, data)
+            # data = json.loads(request.body)
+            review_date=datetime.utcnow().isoformat()
+            review_content = request.POST.get("content")
+            review_dealerid = id
+            # selected_carchoice = request.POST.get("car")
+            # # fetch_car=CarModel.objects.get(pk=selected_carchoice)
+            review_purchase_tickbox = request.POST.get("purchasecheck")
+            review_purchasedate = request.POST.get("purchasedate")
+            # data = CarReview(id=2, dealership=review_dealerid,
+            # name=dealer_name,
+            # review=review_content,
+            # purchase=review_purchase_tickbox,
+            # purchase_date=review_purchasedate,
+            # car_make=fetch_car.car_make.name,
+            # car_model=fetch_car.model_name,
+            # car_year=fetch_car.model_year,
+            # time=review_date,
+            # sentiment=analyze_review_sentiments(review_content)
+            review_body = dict()
+            review_body = {"id":2323, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content)}
+            data = json.dumps(review_body)
+            post_request(url, data)
             # context['message']='Review posted succesfully'
-            render(request, 'djangoapp/add_review.html', context)
+            redirect("djangoapp:dealer_details", id=id)
             return HttpResponse("Review added successfully!")
         else:
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
     elif request.method == "GET":
+        
+        cars = CarModel.objects.all()
+        context['cars']=cars
         return render(request, 'djangoapp/add_review.html', context)
         # return HttpResponse("executing get request")
 
 def get_reviews(request, id):
     if request.method == "GET":
         # id = request.GET.get('id')  
-        url = f"https://urmaskryner-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={id}"
+        url = f"https://urmaskryner-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={id}"
         # Get dealers from the URL
         reviews = get_reviews_from_cf(url)
         dealer_name = get_dealerships_by_id(id)
