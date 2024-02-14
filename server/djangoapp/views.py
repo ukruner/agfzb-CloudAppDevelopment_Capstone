@@ -115,12 +115,12 @@ def add_review(request, id):
         if User.is_authenticated:
             # data = json.loads(request.body)
             review_date=datetime.utcnow().isoformat()
-            review_content = request.POST.get("content")
+            review_content = request.POST("content")
             review_dealerid = id
             # selected_carchoice = request.POST.get("car")
             # # fetch_car=CarModel.objects.get(pk=selected_carchoice)
-            review_purchase_tickbox = request.POST.get("purchasecheck")
-            review_purchasedate = request.POST.get("purchasedate")
+            review_purchase_tickbox = request.POST("purchasecheck")
+            review_purchasedate = request.POST("purchasedate")
             # data = CarReview(id=2, dealership=review_dealerid,
             # name=dealer_name,
             # review=review_content,
@@ -134,10 +134,19 @@ def add_review(request, id):
             review_body = dict()
             review_body = {"id":2323, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content)}
             data = json.dumps(review_body)
-            post_request(url, data)
+            # post_request(url, data)
+            headers = {'Content-Type': 'application/json'}
+            response = requests.post(url, headers=headers, data=data)
             # context['message']='Review posted succesfully'
-            redirect("djangoapp:dealer_details", id=id)
-            return HttpResponse("Review added successfully!")
+            # redirect("djangoapp:dealer_details", id=id)
+            if response.status_code == 200:
+                # Handle successful response
+                # For example, you could redirect or render a success message
+                return HttpResponse("Review submitted successfully")
+            else:
+                # Handle unsuccessful response
+                # For example, you could render an error message
+                return HttpResponse("Failed to submit review", status=response.status_code)
         else:
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
