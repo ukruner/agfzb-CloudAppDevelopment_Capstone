@@ -61,7 +61,7 @@
         </nav>
     <!--Add review form here -->
     {% load static %}
-    <form action="{% url 'djangoapp:add_review' dealer_id %}" method="post">
+    <form method="post" action="{% url 'djangoapp:add_review' dealer_id %}">
         <div><h1>Add review for dealership {{dealer_name}}</h1></div>
         <div><h3>Enter the review content:</h3></div>
         <p></p>
@@ -90,6 +90,8 @@
         <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
         
        <p></p>
-       <a class="btn btn-link" type="submit" href="{% url 'djangoapp:dealer_details' dealer_id %}">Submit</a>
+       <button type="submit" class="btn btn-link">Submit</button>
+       
+    </form>
     </body>
 </html>

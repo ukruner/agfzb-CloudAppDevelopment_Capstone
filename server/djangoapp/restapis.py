@@ -60,7 +60,6 @@ def get_reviews_from_cf(url, **kwargs):
     if json_result:
         # Get the row list in JSON as dealers
         reviews = json_result
-        print(reviews)
         # For each dealer object
         for review in reviews:
             for k in keylist:
@@ -81,6 +80,7 @@ def get_reviews_from_cf(url, **kwargs):
             car_year=review_obj['car_year'],
             time=review_obj['time'],
             sentiment=analyze_review_sentiments(review_obj['review']))
+            print(review_obj['review'])
             results.append(review_new)
 
     return results

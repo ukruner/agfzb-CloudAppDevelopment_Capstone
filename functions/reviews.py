@@ -57,8 +57,9 @@ def post_review():
     if not request.json:
         abort(400, description='Invalid JSON data')
     
-    # Extract review data from the request JSON
-    review_data = request.json
+    # Your further processing logic here
+    review_data=request.json
+    print(review_data, flush=True)
 
     # Validate that the required fields are present in the review data
     required_fields = ['dealership', 'review', 'purchase', 'purchase_date']
@@ -66,7 +67,7 @@ def post_review():
         if field not in review_data:
             abort(400, description=f'Missing required field: {field}')
 
-    # Save the review data as a new document in the Cloudant database
+    # # Save the review data as a new document in the Cloudant database
     db.create_document(review_data)
     return jsonify({"message": "Review posted successfully"}), 201
    
@@ -75,4 +76,4 @@ def internal_server_error(error):
     return jsonify({"error": "Something went wrong on the server"}), 500    
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

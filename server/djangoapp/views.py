@@ -8,6 +8,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
+import requests
 from .restapis import get_dealers_from_cf, get_reviews_from_cf, post_request, analyze_review_sentiments
 import logging
 import json
@@ -113,40 +114,51 @@ def add_review(request, id):
     context['dealer_id']=id
     if request.method == 'POST':
         if User.is_authenticated:
-            # data = json.loads(request.body)
-            review_date=datetime.utcnow().isoformat()
-            review_content = request.POST("content")
-            review_dealerid = id
-            # selected_carchoice = request.POST.get("car")
-            # # fetch_car=CarModel.objects.get(pk=selected_carchoice)
-            review_purchase_tickbox = request.POST("purchasecheck")
-            review_purchasedate = request.POST("purchasedate")
-            # data = CarReview(id=2, dealership=review_dealerid,
-            # name=dealer_name,
-            # review=review_content,
-            # purchase=review_purchase_tickbox,
-            # purchase_date=review_purchasedate,
-            # car_make=fetch_car.car_make.name,
-            # car_model=fetch_car.model_name,
-            # car_year=fetch_car.model_year,
-            # time=review_date,
-            # sentiment=analyze_review_sentiments(review_content)
-            review_body = dict()
-            review_body = {"id":2323, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content)}
-            data = json.dumps(review_body)
+        #     # data = json.loads(request.body)
+        #     review_date=datetime.utcnow().isoformat()
+        #     review_content = request.POST("content")
+        #     review_dealerid = id
+        #     # car_id = request.POST["car"]
+        #     # car = CarModel.objects.get(pk=car_id)
+        #     # car_name = car.carmake.name
+        #     # car_model_name = car.name
+        #     # car_year = int(car.model_year.strftime("%Y"))
+        #     review_purchase_tickbox = request.POST("purchasecheck")
+        #     review_purchasedate = request.POST("purchasedate")
+        #     review_body = dict()
+        #     review_body = {"id":2323, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content)}
+        #     data = json.dumps(review_body)
             # post_request(url, data)
             headers = {'Content-Type': 'application/json'}
-            response = requests.post(url, headers=headers, data=data)
+            sample={
+    "id": 34236,
+    "name": "marianka",
+    "dealership": 13,
+    "review": "best ever, ever, ever service",
+    "purchase": False,
+    "purchase_date": "02/16/2021",
+    "car_make": "Audi",
+    "car_model": "Car",
+    "car_year": 2021
+}
+            datasample = json.dumps(sample)
+            response = requests.post(url, data=datasample, headers=headers)
+            try:
+                response.raise_for_status()
+                print(response.text)
+            except requests.exceptions.HTTPError as err:
+                print(err)
+            return redirect("djangoapp:dealer_details", id=id)
             # context['message']='Review posted succesfully'
-            # redirect("djangoapp:dealer_details", id=id)
-            if response.status_code == 200:
-                # Handle successful response
-                # For example, you could redirect or render a success message
-                return HttpResponse("Review submitted successfully")
-            else:
-                # Handle unsuccessful response
-                # For example, you could render an error message
-                return HttpResponse("Failed to submit review", status=response.status_code)
+            
+            # if response.status_code == 200:
+            #     # Handle successful response
+            #     # For example, you could redirect or render a success message
+            #     return HttpResponse("Review submitted successfully")
+            # else:
+            #     # Handle unsuccessful response
+            #     # For example, you could render an error message
+            #     return HttpResponse("Failed to submit review", status=response.status_code)
         else:
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
