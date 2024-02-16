@@ -89,7 +89,7 @@ def get_reviews_from_cf(url, **kwargs):
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
 def post_request(url, data):
-    required_fields = ['id', 'name', 'dealership', 'review', 'purchase']
+    required_fields = ['id', 'name', 'dealership', 'review']
 
     try:
         datajson = json.loads(data)

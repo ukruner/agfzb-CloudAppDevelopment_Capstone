@@ -123,10 +123,13 @@ def add_review(request, id):
             car_name = car.car_make.name
             car_model_name = car.model_name
             car_year = int(car.model_year.strftime("%Y"))
-            review_purchase_tickbox = request.POST["purchasecheck"]
+            # review_purchase_tickbox = False
+            # if "purchasecheck" in request.POST:
+            #     review_purchase_tickbox = request.POST["purchasecheck"]
+            review_purchase_tickbox = request.POST.get("purchasecheck", False)
             review_purchasedate = request.POST["purchasedate"]
             review_body = dict()
-            review_body = {"id":review_id, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content), "car_make":car_name, "car_model":car_model_name, "car_year":car_year}
+            review_body = {"id":review_id, "name":dealer_name,"review":review_content, "dealership":id, "purchase":bool(review_purchase_tickbox), "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content), "car_make":car_name, "car_model":car_model_name, "car_year":car_year}
             data = json.dumps(review_body)
             # response = requests.post(url, data=data, headers=headers)
             response = post_request(url, data)
