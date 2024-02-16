@@ -109,65 +109,43 @@ def review_template(request, id):
 def add_review(request, id):
     url = 'https://urmaskryner-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review'
     context = {}
-    dealer_name = get_dealerships_by_id(id)
+    dealer_name = get_dealerships_by_id(id).full_name
     context['dealer_name']=dealer_name
     context['dealer_id']=id
     if request.method == 'POST':
         if User.is_authenticated:
-        #     # data = json.loads(request.body)
-        #     review_date=datetime.utcnow().isoformat()
-        #     review_content = request.POST("content")
-        #     review_dealerid = id
-        #     # car_id = request.POST["car"]
-        #     # car = CarModel.objects.get(pk=car_id)
-        #     # car_name = car.carmake.name
-        #     # car_model_name = car.name
-        #     # car_year = int(car.model_year.strftime("%Y"))
-        #     review_purchase_tickbox = request.POST("purchasecheck")
-        #     review_purchasedate = request.POST("purchasedate")
-        #     review_body = dict()
-        #     review_body = {"id":2323, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content)}
-        #     data = json.dumps(review_body)
-            # post_request(url, data)
-            headers = {'Content-Type': 'application/json'}
-            sample={
-    "id": 34236,
-    "name": "marianka",
-    "dealership": 13,
-    "review": "best ever, ever, ever service",
-    "purchase": False,
-    "purchase_date": "02/16/2021",
-    "car_make": "Audi",
-    "car_model": "Car",
-    "car_year": 2021
-}
-            datasample = json.dumps(sample)
-            response = requests.post(url, data=datasample, headers=headers)
-            try:
-                response.raise_for_status()
-                print(response.text)
-            except requests.exceptions.HTTPError as err:
-                print(err)
-            return redirect("djangoapp:dealer_details", id=id)
-            # context['message']='Review posted succesfully'
+            review_date=datetime.utcnow().isoformat()
+            review_content = request.POST["content"]
+            review_dealerid = id
+            review_id = request.POST["reviewid"]
+            car_id = request.POST["car"]
+            car = CarModel.objects.get(pk=car_id)
+            car_name = car.car_make.name
+            car_model_name = car.model_name
+            car_year = int(car.model_year.strftime("%Y"))
+            review_purchase_tickbox = request.POST["purchasecheck"]
+            review_purchasedate = request.POST["purchasedate"]
+            review_body = dict()
+            review_body = {"id":review_id, "name":dealer_name,"review":review_content, "dealership":id, "purchase":review_purchase_tickbox, "purchase_date":review_purchasedate, "sentiment":analyze_review_sentiments(review_content), "car_make":car_name, "car_model":car_model_name, "car_year":car_year}
+            data = json.dumps(review_body)
+            # response = requests.post(url, data=data, headers=headers)
+            response = post_request(url, data)
             
-            # if response.status_code == 200:
-            #     # Handle successful response
-            #     # For example, you could redirect or render a success message
-            #     return HttpResponse("Review submitted successfully")
-            # else:
-            #     # Handle unsuccessful response
-            #     # For example, you could render an error message
-            #     return HttpResponse("Failed to submit review", status=response.status_code)
+            if response.status_code >= 200:
+                # Handle successful response
+                HttpResponse("Review submitted successfully")
+                return redirect("djangoapp:dealer_details", id=id)
+            else:
+                # Handle unsuccessful response
+                HttpResponse("Failed to submit review", status=response.status_code)
         else:
             context['message']="Only authenticated users can post reviews, please login"
             return render(request, 'djangoapp/login.html', context)
     elif request.method == "GET":
-        
         cars = CarModel.objects.all()
         context['cars']=cars
         return render(request, 'djangoapp/add_review.html', context)
-        # return HttpResponse("executing get request")
+
 
 def get_reviews(request, id):
     if request.method == "GET":
@@ -191,12 +169,4 @@ def contact_us(request):
     context = {}
     if request.method == "GET":
         return render(request, 'djangoapp/contact.html', context)
-
-# Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
-
-# Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
 

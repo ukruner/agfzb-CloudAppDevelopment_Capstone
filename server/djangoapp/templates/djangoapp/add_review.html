@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Dealership and Review project index page</title>
+    <title>Add review page</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -59,10 +59,14 @@
                 </ul>		  
             </div>
         </nav>
-    <!--Add review form here -->
+
     {% load static %}
     <form method="post" action="{% url 'djangoapp:add_review' dealer_id %}">
         <div><h1>Add review for dealership {{dealer_name}}</h1></div>
+        <p></p>
+        <div><h3>Enter review id</h3></div>
+        <input type="text" class="form-control" placeholder="1" name="reviewid">
+        <p></p>
         <div><h3>Enter the review content:</h3></div>
         <p></p>
         <textarea class="form-control" id="content" name="content" rows="2" required></textarea>
@@ -88,10 +92,8 @@
             });
         </script>
         <input class="date-own form-control" type="text" name="purchasedate" id="purchasedate">
-        
        <p></p>
-       <button type="submit" class="btn btn-link">Submit</button>
-       
+       <button class="btn btn-link" type="submit" href="{% url 'djangoapp:dealer_details' dealer_id %}">Submit</button>
     </form>
     </body>
 </html>

@@ -88,18 +88,46 @@ def get_reviews_from_cf(url, **kwargs):
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
 
-def post_request(url, json_payload, **kwargs):
-    required_fields = ['id', 'name', 'dealership', 'review', 'purchase', 'time']
-    if not json_payload:
+def post_request(url, data):
+    required_fields = ['id', 'name', 'dealership', 'review', 'purchase']
+
+    try:
+        datajson = json.loads(data)
+    except json.JSONDecodeError:
+        return HttpResponseBadRequest("Invalid JSON data")
+
+    # headers = {'Content-Type': 'application/json'}
+ 
+    if not datajson:
         return HttpResponseBadRequest("JSON data missing")
 
-    # Validate that the required fields are present in the review data
-    else:
-        for field in required_fields:
-            if field not in json_payload.keys():
-                return HttpResponseBadRequest(f"{field} is a required field, and it is missing")
-        requests.post(url, params=kwargs, json=json_payload)
+    for field in required_fields:
+        if field not in datajson:
+            return HttpResponseBadRequest(f"{field} is a required field, and it is missing")
 
+    try:
+        response = requests.post(url, json=datajson)
+        response.raise_for_status()  # Raise an error for non-2xx status codes
+    except requests.RequestException as e:
+        return HttpResponse(f"Failed to post review: {e}", status=500)
+
+    return HttpResponse("Review posted successfully")
+
+# def post_request(url, data):
+#     required_fields = ['id', 'name', 'dealership', 'review', 'purchase', 'time']
+#     datajson=json.loads(data)
+#     # print(data)
+#     headers = {'Content-Type': 'application/json'}
+#     if not data:
+#         return HttpResponseBadRequest("JSON data missing")
+
+#     # Validate that the required fields are present in the review data
+#     else:
+#         for field in required_fields:
+#             if field not in datajson.keys():
+#                 return HttpResponseBadRequest(f"{field} is a required field, and it is missing")
+#     response = requests.post(url, headers=headers, json=datajson)
+#     return HttpResponse ("review posted successfully")
 
     # Save the review data as a new document in the Cloudant database
 
