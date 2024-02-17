@@ -20,17 +20,16 @@
                         <a class="navbar-brand" href="/djangoapp">Car Dealership Drivaroo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Add review</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Dealer details</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" href="/djangoapp/about">About us</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Registration</a>
+                        <a class="nav-link active" href="/djangoapp/contact">Contact us</a>
                     </li>
+                    {% if not user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/djangoapp/registration">Registration</a>
+                    </li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="collapse navbar-collapse justify-content-end" id="navbarSupportedContent">

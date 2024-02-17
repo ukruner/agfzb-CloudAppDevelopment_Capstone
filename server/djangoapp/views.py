@@ -147,6 +147,13 @@ def add_review(request, id):
     elif request.method == "GET":
         cars = CarModel.objects.all()
         context['cars']=cars
+        for car in cars:
+            print(f"Car ID: {car.pk}")
+            print(f"Make: {car.car_make.name}")
+            print(f"Model: {car.model_name}")
+            print(f"Year: {car.model_year}")
+    # Add more attributes as needed
+            print("\n")  # Add a new line for readability
         return render(request, 'djangoapp/add_review.html', context)
 
 

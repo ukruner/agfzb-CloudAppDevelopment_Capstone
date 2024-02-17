@@ -23,12 +23,6 @@
                         <a class="navbar-brand" href="/djangoapp">Car Dealership Drivaroo</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Add review</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Dealer details</a>
-                    </li>
-                    <li class="nav-item">
                         <a class="nav-link active" href="/djangoapp/about">About us</a>
                     </li>
                     <li class="nav-item">
@@ -81,7 +75,7 @@
         <div><h3>Select your car (model-make-year):</h3></div>
         <select name="car" id="car" class="form-select" required>
             {% for car in cars %}
-                <option selected value={{car.dealer_id}}>{{car.car_make.name}}-{{car.model_name}}-{{ car.model_year|date:"Y" }}</option>
+                <option selected value={{car.pk}}>{{car.car_make.name}}-{{car.model_name}}-{{ car.model_year|date:"Y" }}</option>
             {% endfor %}
        </select>
        <p></p>
