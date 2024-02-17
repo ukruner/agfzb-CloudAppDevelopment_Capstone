@@ -155,14 +155,19 @@ def get_reviews(request, id):
         # id = request.GET.get('id')  
         url = f"https://urmaskryner-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/review?id={id}"
         # Get dealers from the URL
-        reviews = get_reviews_from_cf(url)
+        context={}
         dealer_name = get_dealerships_by_id(id)
-        # Concat all dealer's short name
-        review_content = ', '.join([review.review for review in reviews])
-        # Return a list of dealer short name
-        context = {"reviews": reviews, "dealer_name": dealer_name}
-        return render(request, 'djangoapp/dealer_details.html', context)
-
+        context["dealer_name"]=dealer_name
+        context["id"]=id
+        reviews = get_reviews_from_cf(url)
+        if reviews:
+            review_content = ', '.join([review.review for review in reviews])
+            context["reviews"]=reviews
+            print(reviews)
+            return render(request, 'djangoapp/dealer_details.html', context)
+        else:
+            return render(request, 'djangoapp/noreviews.html', context)
+            
 def about_us(request):
     context = {}
     if request.method == "GET":

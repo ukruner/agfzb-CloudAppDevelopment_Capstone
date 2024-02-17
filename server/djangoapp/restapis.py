@@ -56,34 +56,37 @@ def get_reviews_from_cf(url, **kwargs):
     results = []
     keylist = ['dealership', 'name', 'time', 'id', 'review', 'purchase', 'purchase_date', 'car_make', 'car_model', 'car_year']
     # Call get_request with a URL parameter
-    json_result = get_request(url, id)
-    if json_result:
-        # Get the row list in JSON as dealers
-        reviews = json_result
-        # For each dealer object
-        for review in reviews:
-            for k in keylist:
-                if k not in review.keys():
-                    review[k]=''
-            # Get its content in `doc` object
-            review_obj = review
-            print("Review", review_obj)
-            # Create a CarDealer object with values in `doc` object
-            review_new = CarReview(dealership=review_obj['dealership'],
-            name=review_obj['name'],
-            id=review_obj['id'],
-            review=review_obj['review'],
-            purchase=review_obj['purchase'],
-            purchase_date=review_obj['purchase_date'],
-            car_make=review_obj['car_make'],
-            car_model=review_obj['car_model'],
-            car_year=review_obj['car_year'],
-            time=review_obj['time'],
-            sentiment=analyze_review_sentiments(review_obj['review']))
-            print(review_obj['review'])
-            results.append(review_new)
-
-    return results
+    try:
+        json_result = get_request(url, id)
+        if json_result:
+            # Get the row list in JSON as reviews
+            reviews = json_result
+            # For each dealer object
+            for review in reviews:
+                for k in keylist:
+                    if k not in review.keys():
+                        review[k]=''
+                # Get its content in `doc` object
+                review_obj = review
+                print("Review", review_obj)
+                # Create a CarDealer object with values in `doc` object
+                review_new = CarReview(dealership=review_obj['dealership'],
+                name=review_obj['name'],
+                id=review_obj['id'],
+                review=review_obj['review'],
+                purchase=review_obj['purchase'],
+                purchase_date=review_obj['purchase_date'],
+                car_make=review_obj['car_make'],
+                car_model=review_obj['car_model'],
+                car_year=review_obj['car_year'],
+                time=review_obj['time'],
+                sentiment=analyze_review_sentiments(review_obj['review']))
+                print(review_obj['review'])
+                results.append(review_new)
+            return results
+    except:
+        return None
+    
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)

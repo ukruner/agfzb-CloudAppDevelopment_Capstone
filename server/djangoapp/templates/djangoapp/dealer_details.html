@@ -31,7 +31,7 @@
                 <ul class="navbar-nav text-nowrap">
                     {% if user.is_authenticated %}
                 <li class="nav-item">
-                    <a class="nav-link active" href="/djangoapp/post/review">Add review</a>
+                    <a class="nav-link active" href="{% url 'djangoapp:add_review' id %}">Add review</a>
                 </li>
                 <li>
                     <a class="btn btn-link" href="#">{{ user.first_name }}({{ user.username }})</a>
@@ -54,7 +54,8 @@
             </div>
         </nav>
         {% load static %}
-        
+            <p></p>
+            <p></p>
             <div><h1>Reviews for {{dealer_name}}</h1></div>
             <div class="card-columns p-5">
             {% for review in reviews %}

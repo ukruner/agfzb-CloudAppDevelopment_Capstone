@@ -61,6 +61,8 @@
         </nav>
 
     {% load static %}
+    <div class="container">
+    <p></p>
     <form method="post" action="{% url 'djangoapp:add_review' dealer_id %}">
         <div><h1>Add review for dealership {{dealer_name}}</h1></div>
         <p></p>
@@ -82,6 +84,7 @@
                 <option selected value={{car.dealer_id}}>{{car.car_make.name}}-{{car.model_name}}-{{ car.model_year|date:"Y" }}</option>
             {% endfor %}
        </select>
+       <p></p>
         <div><h3>Select Your Purchase Date:</h3></div>
         <p></p>
         <script type="text/javascript">
@@ -95,5 +98,6 @@
        <p></p>
        <button class="btn btn-link" type="submit" href="{% url 'djangoapp:dealer_details' dealer_id %}">Submit</button>
     </form>
+</div>
     </body>
 </html>

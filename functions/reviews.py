@@ -3,6 +3,7 @@ from cloudant.query import Query
 from flask import Flask, jsonify, request, abort
 from ibm_cloud_sdk_core import ApiException
 import requests
+import time
 import atexit
 
 #Add your Cloudant service credentials here
@@ -48,7 +49,9 @@ def get_reviews():
     if (data_list):
         return jsonify(data_list)
     else:
-        return jsonify({"error": "Dealer ID does not exist"}), 404
+        return None
+    # else:
+    #     return jsonify({"error": "Dealer ID does not exist"}), 404
             
 
     
@@ -59,15 +62,13 @@ def post_review():
     
     # Your further processing logic here
     review_data=request.json
-    print(review_data, flush=True)
 
     # Validate that the required fields are present in the review data
     required_fields = ['dealership', 'review', 'purchase', 'purchase_date']
     for field in required_fields:
         if field not in review_data:
             abort(400, description=f'Missing required field: {field}')
-
-    # # Save the review data as a new document in the Cloudant database
+    
     db.create_document(review_data)
     return jsonify({"message": "Review posted successfully"}), 201
    

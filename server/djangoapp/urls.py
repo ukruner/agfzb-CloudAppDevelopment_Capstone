@@ -12,6 +12,7 @@ urlpatterns = [
     path(route='logout/', view=views.logout_request, name='logout'),
     path(route='about/', view=views.about_us, name='about'),
     path(route='dealer_details/<int:id>', view=views.get_reviews, name='dealer_details'),
+    path(route='noreviews/', view=views.get_reviews, name='noreviews'),
     path(route='contact/', view=views.contact_us, name='contact'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
